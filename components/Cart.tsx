@@ -71,7 +71,7 @@ const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onUpdateSize, onBa
                             onClick={() => onUpdateSize(item.iceCream.id, item.format, item.size, s)}
                             className={`px-3 py-1 rounded-lg text-xs font-bold border-2 transition-all ${
                               item.size === s 
-                                ? 'bg-yellow-400 border-yellow-400 text-white shadow-sm' 
+                                ? 'bg-yellow-400 border-yellow-400 text-gray-900 shadow-sm' 
                                 : 'bg-white border-gray-100 text-gray-400 hover:border-yellow-200'
                             }`}
                           >

@@ -143,7 +143,7 @@ const Profile: React.FC<ProfileProps> = ({
             <div className="relative group w-24 h-24 mx-auto mb-4">
               <div 
                 onClick={handleAvatarClick}
-                className="w-full h-full bg-yellow-400 rounded-full flex items-center justify-center text-4xl text-white font-bold border-4 border-white shadow-lg overflow-hidden cursor-pointer group-hover:brightness-90 transition-all"
+                className="w-full h-full bg-yellow-400 rounded-full flex items-center justify-center text-4xl text-gray-900 font-bold border-4 border-white shadow-lg overflow-hidden cursor-pointer group-hover:brightness-90 transition-all"
               >
                 {isBase64Avatar ? (
                   <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />

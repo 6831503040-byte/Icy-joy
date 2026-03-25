@@ -104,7 +104,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onBack, onAddToC
                     <button
                       key={s}
                       onClick={() => setSize(s)}
-                      className={`py-3 px-2 rounded-2xl font-bold transition-all border-2 flex flex-col items-center justify-center ${size === s ? 'bg-yellow-400 border-yellow-400 text-white shadow-lg' : 'bg-gray-50 border-gray-100 text-gray-500 hover:border-yellow-200'}`}
+                      className={`py-3 px-2 rounded-2xl font-bold transition-all border-2 flex flex-col items-center justify-center ${size === s ? 'bg-yellow-400 border-yellow-400 text-gray-900 shadow-lg' : 'bg-gray-50 border-gray-100 text-gray-500 hover:border-yellow-200'}`}
                     >
                       <span className="text-lg">Size {s}</span>
                       <span className={`text-[10px] uppercase ${size === s ? 'text-yellow-100' : 'text-gray-400'}`}>{getSizeVolume(s)}</span>

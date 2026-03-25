@@ -36,19 +36,19 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, cartCount, isL
         <div className="hidden md:flex items-center gap-8 font-semibold text-gray-700">
           <button 
             onClick={() => onNavigate('home')}
-            className={`hover:text-pink-600 transition-colors ${currentView === 'home' ? 'text-pink-600' : ''}`}
+            className={`hover:text-pink-600 transition-all border-b-2 pb-1 ${currentView === 'home' ? 'text-pink-600 border-pink-600 font-bold' : 'border-transparent'}`}
           >
             Home
           </button>
           <button 
             onClick={() => onNavigate('menu')}
-            className={`hover:text-pink-600 transition-colors ${currentView === 'menu' || currentView === 'details' ? 'text-pink-600' : ''}`}
+            className={`hover:text-pink-600 transition-all border-b-2 pb-1 ${currentView === 'menu' || currentView === 'details' ? 'text-pink-600 border-pink-600 font-bold' : 'border-transparent'}`}
           >
             Menu
           </button>
           <button 
             onClick={() => onNavigate('ai-match')}
-            className={`hover:text-pink-600 transition-colors ${currentView === 'ai-match' ? 'text-pink-600' : ''}`}
+            className={`hover:text-pink-600 transition-all border-b-2 pb-1 ${currentView === 'ai-match' ? 'text-pink-600 border-pink-600 font-bold' : 'border-transparent'}`}
           >
             AI Finder
           </button>
@@ -82,7 +82,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, cartCount, isL
           {isLoggedIn ? (
             <button 
               onClick={() => onNavigate('profile')}
-              className={`w-10 h-10 rounded-full overflow-hidden bg-yellow-400 flex items-center justify-center font-bold text-white border-2 transition-all hover:scale-110 shadow-sm ${currentView === 'profile' ? 'border-pink-500 ring-2 ring-pink-200' : 'border-white'}`}
+              className={`w-10 h-10 rounded-full overflow-hidden bg-yellow-400 flex items-center justify-center font-bold text-gray-900 border-2 transition-all hover:scale-110 shadow-sm ${currentView === 'profile' ? 'border-pink-500 ring-2 ring-pink-200' : 'border-white'}`}
             >
               {isBase64 ? (
                 <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />

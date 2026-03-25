@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ICE_CREAMS } from '../constants';
 import { IceCream, ServingFormat, ServingSize } from '../types';
 
@@ -10,15 +10,70 @@ interface MenuProps {
   onToggleFavorite: (id: string) => void;
 }
 
+type SortOption = 'default' | 'price-asc' | 'price-desc' | 'rating-desc' | 'name-asc';
+
 const Menu: React.FC<MenuProps> = ({ onSelectProduct, onAddToCart, favorites, onToggleFavorite }) => {
   const [filter, setFilter] = useState<'All' | 'Classic' | 'Special' | 'Fruity'>('All');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState<SortOption>('default');
   const [quickAddId, setQuickAddId] = useState<string | null>(null);
   const [selectedFormat, setSelectedFormat] = useState<ServingFormat>('Scoop');
   const [selectedSize, setSelectedSize] = useState<ServingSize>('S');
+  
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const filteredItems = filter === 'All' 
-    ? ICE_CREAMS 
-    : ICE_CREAMS.filter(item => item.category === filter);
+  // Keyboard shortcut for search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const filteredAndSortedItems = (() => {
+    let items = [...ICE_CREAMS];
+
+    // Category Filter
+    if (filter !== 'All') {
+      items = items.filter(item => item.category === filter);
+    }
+
+    // Search Filter
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
+      items = items.filter(item => 
+        item.name.toLowerCase().includes(term) || 
+        item.description.toLowerCase().includes(term) ||
+        item.category.toLowerCase().includes(term)
+      );
+    }
+
+    // Sorting
+    switch (sortBy) {
+      case 'price-asc':
+        items.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-desc':
+        items.sort((a, b) => b.price - a.price);
+        break;
+      case 'rating-desc':
+        items.sort((a, b) => b.rating - a.rating);
+        break;
+      case 'name-asc':
+        items.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      default:
+        // Keep original order
+        break;
+    }
+
+    return items;
+  })();
 
   const getSizePriceModifier = (s: ServingSize) => {
     switch (s) {
@@ -59,28 +114,76 @@ const Menu: React.FC<MenuProps> = ({ onSelectProduct, onAddToCart, favorites, on
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-8">
-        <h2 className="text-4xl md:text-5xl font-black text-gray-800">Explore Our <span className="text-pink-600">Scoops</span></h2>
-        
-        <div className="flex flex-wrap justify-center gap-3">
-          {['All', 'Classic', 'Fruity', 'Special'].map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setFilter(cat as any)}
-              className={`px-6 py-2 rounded-full font-bold transition-all border-2 ${
-                filter === cat 
-                ? 'bg-yellow-400 border-yellow-400 text-white shadow-lg' 
-                : 'bg-white border-pink-200 text-gray-600 hover:border-pink-400'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+      <div className="flex flex-col space-y-8 mb-12">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+          <h2 className="text-4xl md:text-5xl font-black text-gray-800">Explore Our <span className="text-pink-600">Scoops</span></h2>
+          
+          <div className="flex flex-wrap justify-center gap-3">
+            {['All', 'Classic', 'Fruity', 'Special'].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setFilter(cat as any)}
+                className={`px-6 py-2 rounded-full font-bold transition-all border-2 ${
+                  filter === cat 
+                  ? 'bg-yellow-400 border-yellow-400 text-gray-900 shadow-lg' 
+                  : 'bg-white border-pink-200 text-gray-600 hover:border-pink-400'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {/* Search and Sort Bar */}
+        <div className="flex flex-col sm:flex-row gap-4 items-center bg-white p-4 rounded-3xl shadow-sm border border-pink-50">
+          <div className="relative flex-grow w-full">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+            <input 
+              ref={searchInputRef}
+              type="text" 
+              placeholder="Search flavors... (Press '/' to focus)"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:outline-none focus:border-pink-300 transition-all text-gray-700 font-medium"
+            />
+            {searchTerm && (
+              <button 
+                onClick={() => setSearchTerm('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-pink-500"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <span className="text-sm font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">Sort by</span>
+            <select 
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortOption)}
+              className="flex-grow sm:flex-grow-0 px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:outline-none focus:border-pink-300 transition-all text-gray-700 font-bold appearance-none cursor-pointer pr-10 relative"
+              style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%239CA3AF\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 9l-7 7-7-7\' /%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.5rem' }}
+            >
+              <option value="default">Featured</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="rating-desc">Top Rated</option>
+              <option value="name-asc">Name: A-Z</option>
+            </select>
+          </div>
+        </div>
+
+        {searchTerm && (
+          <p className="text-gray-500 font-medium animate-in fade-in slide-in-from-left-2">
+            Found <span className="text-pink-600 font-black">{filteredAndSortedItems.length}</span> results for "{searchTerm}"
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-        {filteredItems.map((item) => {
+        {filteredAndSortedItems.length > 0 ? (
+          filteredAndSortedItems.map((item) => {
           const isFav = favorites.includes(item.id);
           const isQuickAdding = quickAddId === item.id;
           const currentPrice = isQuickAdding && selectedFormat === 'Quart' 
@@ -138,7 +241,7 @@ const Menu: React.FC<MenuProps> = ({ onSelectProduct, onAddToCart, favorites, on
                             <button
                               key={s}
                               onClick={() => setSelectedSize(s as ServingSize)}
-                              className={`flex-1 py-2 text-xl font-black rounded-2xl transition-all border-2 flex flex-col items-center justify-center ${selectedSize === s ? 'bg-yellow-400 border-yellow-400 text-white shadow-lg' : 'bg-white border-white text-gray-400'}`}
+                              className={`flex-1 py-2 text-xl font-black rounded-2xl transition-all border-2 flex flex-col items-center justify-center ${selectedSize === s ? 'bg-yellow-400 border-yellow-400 text-gray-900 shadow-lg' : 'bg-white border-white text-gray-400'}`}
                             >
                               <span>{s}</span>
                               <span className={`text-[8px] font-bold ${selectedSize === s ? 'text-yellow-100' : 'text-gray-400'}`}>{getSizeVolume(s as ServingSize)}</span>
@@ -194,7 +297,19 @@ const Menu: React.FC<MenuProps> = ({ onSelectProduct, onAddToCart, favorites, on
               </div>
             </div>
           );
-        })}
+        })
+      ) : (
+        <div className="col-span-full py-20 text-center bg-white rounded-[3rem] shadow-sm border-4 border-dashed border-gray-100">
+            <div className="text-8xl mb-6">🍦❓</div>
+            <h3 className="text-2xl font-bold text-gray-400">No scoops found matching your search...</h3>
+            <button 
+              onClick={() => { setSearchTerm(''); setFilter('All'); }}
+              className="mt-8 px-10 py-4 bg-pink-600 text-white font-bold rounded-2xl hover:bg-pink-700 transition-all shadow-lg"
+            >
+              Clear all filters
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

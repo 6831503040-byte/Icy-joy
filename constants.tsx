@@ -23,7 +23,7 @@ export const ICE_CREAMS: IceCream[] = [
   },
   {
     id: '3',
-    name: 'Macha Pistachio',
+    name: 'Matcha Pistachio',
     description: 'Creamy Matcha meets crunchy roasted Pistachios. A bold, nutty delight in every scoop.',
     price: 35,
     image: 'https://images.pexels.com/photos/8713080/pexels-photo-8713080.jpeg',

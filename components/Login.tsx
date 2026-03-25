@@ -233,7 +233,11 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
           
           <button 
             type="submit"
-            className={`w-full py-5 ${isForgotPassword ? 'bg-pink-600 hover:bg-pink-700 shadow-pink-100' : (isSignUp ? 'bg-pink-600 hover:bg-pink-700 shadow-pink-100' : 'bg-yellow-400 hover:bg-yellow-500 shadow-yellow-100')} text-white text-xl font-black rounded-2xl transition-all shadow-lg active:scale-95`}
+            className={`w-full py-5 ${
+              isForgotPassword || isSignUp 
+                ? 'bg-pink-600 hover:bg-pink-700 shadow-pink-100 text-white' 
+                : 'bg-yellow-400 hover:bg-yellow-500 shadow-yellow-100 text-gray-900'
+            } text-xl font-black rounded-2xl transition-all shadow-lg active:scale-95`}
           >
             {isForgotPassword ? 'Reset Password ✨' : (isSignUp ? 'Create Account' : 'Sign In 🍦')}
           </button>
