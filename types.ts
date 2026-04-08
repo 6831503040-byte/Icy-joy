@@ -7,6 +7,7 @@ export interface IceCream {
   image: string;
   category: 'Classic' | 'Special' | 'Fruity';
   rating: number;
+  reviewCount: number;
   color: string;
 }
 
@@ -48,4 +49,14 @@ export interface Order {
   items: CartItem[];
   total: number;
   status?: OrderStage;
+}
+
+export interface Review {
+  id: string;
+  productId: string;
+  userId: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  createdAt: number;
 }

@@ -1,0 +1,107 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: products
+    // Document ID: productId
+    // Fields:
+    //   - id: string (required)
+    //   - name: string (required)
+    //   - description: string
+    //   - price: number (required)
+    //   - image: string
+    //   - category: string (Classic, Special, Fruity)
+    //   - rating: number (required)
+    //   - reviewCount: number (required)
+    //   - color: string
+    //
+    // Collection: reviews
+    // Document ID: reviewId
+    // Fields:
+    //   - id: string
+    //   - productId: string (required)
+    //   - userId: string (required)
+    //   - userName: string
+    //   - rating: number (required, 1-5)
+    //   - comment: string
+    //   - createdAt: number (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "6831503040@lamduan.mfu.ac.th" && request.auth.token.email_verified == true));
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function isValidRating(rating) {
+      return rating is number && rating >= 1 && rating <= 5;
+    }
+
+    function isValidReview(data) {
+      return hasRequiredFields(['productId', 'userId', 'rating', 'createdAt']) &&
+             data.productId is string &&
+             data.userId == request.auth.uid &&
+             isValidRating(data.rating) &&
+             (data.comment == null || (data.comment is string && data.comment.size() <= 1000)) &&
+             data.createdAt is number;
+    }
+
+    function isValidProduct(data) {
+      return hasRequiredFields(['id', 'name', 'price', 'rating', 'reviewCount']) &&
+             data.id is string &&
+             data.name is string && data.name.size() > 0 &&
+             data.price is number && data.price >= 0 &&
+             data.rating is number && data.rating >= 0 && data.rating <= 5 &&
+             data.reviewCount is number && data.reviewCount >= 0;
+    }
+
+    function isValidProductUpdate(data, prevData) {
+      return isAuthenticated() &&
+             data.diff(prevData).affectedKeys().hasOnly(['rating', 'reviewCount']) &&
+             data.rating is number && data.rating >= 0 && data.rating <= 5 &&
+             data.reviewCount is number && data.reviewCount == prevData.reviewCount + 1;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /products/{productId} {
+      allow read: if true; // Products are public
+      allow create: if isAdmin() && isValidProduct(request.resource.data);
+      allow update: if (isAdmin() && isValidProduct(request.resource.data)) || isValidProductUpdate(request.resource.data, resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if true; // Reviews are public
+      allow create: if isAuthenticated() && isValidReview(request.resource.data);
+      allow update: if isAuthenticated() && isOwner(resource.data.userId) && isValidReview(request.resource.data);
+      allow delete: if isAuthenticated() && (isOwner(resource.data.userId) || isAdmin());
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      allow create, update: if isAuthenticated() && isOwner(userId);
+    }
+  }
+}

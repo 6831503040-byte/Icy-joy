@@ -124,10 +124,10 @@ const Profile: React.FC<ProfileProps> = ({
   const isBase64Avatar = user.avatar && user.avatar.startsWith('data:image');
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="max-w-4xl mx-auto px-6 py-12">
       <button 
         onClick={onBack}
-        className="mb-8 flex items-center gap-2 text-gray-400 font-bold hover:text-pink-600 transition-colors"
+        className="mb-8 flex items-center gap-2 text-gray-400 font-bold hover:text-pink-600"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -143,7 +143,7 @@ const Profile: React.FC<ProfileProps> = ({
             <div className="relative group w-24 h-24 mx-auto mb-4">
               <div 
                 onClick={handleAvatarClick}
-                className="w-full h-full bg-yellow-400 rounded-full flex items-center justify-center text-4xl text-gray-900 font-bold border-4 border-white shadow-lg overflow-hidden cursor-pointer group-hover:brightness-90 transition-all"
+                className="w-full h-full bg-yellow-400 rounded-full flex items-center justify-center text-4xl text-gray-900 font-bold border-4 border-white shadow-lg overflow-hidden cursor-pointer group-hover:brightness-90"
               >
                 {isBase64Avatar ? (
                   <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
@@ -155,7 +155,7 @@ const Profile: React.FC<ProfileProps> = ({
               {/* Camera Icon Overlay */}
               <div 
                 onClick={handleAvatarClick}
-                className="absolute bottom-0 right-0 w-8 h-8 bg-pink-500 rounded-full border-2 border-white flex items-center justify-center text-white cursor-pointer shadow-md hover:scale-110 transition-transform"
+                className="absolute bottom-0 right-0 w-8 h-8 bg-pink-500 rounded-full border-2 border-white flex items-center justify-center text-white cursor-pointer shadow-md"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -190,7 +190,7 @@ const Profile: React.FC<ProfileProps> = ({
               ) : (
                 <div className="flex items-center justify-center gap-2">
                   <h2 className="text-2xl font-black text-gray-800">{user.name}</h2>
-                  <button onClick={() => setIsEditing(true)} className="text-pink-400 hover:text-pink-600 transition-colors">
+                  <button onClick={() => setIsEditing(true)} className="text-pink-400 hover:text-pink-600">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                     </svg>
@@ -202,7 +202,7 @@ const Profile: React.FC<ProfileProps> = ({
             
             <button 
               onClick={onLogout}
-              className="w-full py-3 border-2 border-red-100 text-red-400 font-bold rounded-xl hover:bg-red-50 hover:border-red-200 transition-all active:scale-95"
+              className="w-full py-3 border-2 border-red-100 text-red-400 font-bold rounded-xl hover:bg-red-50 hover:border-red-200"
             >
               Log Out
             </button>
@@ -217,7 +217,7 @@ const Profile: React.FC<ProfileProps> = ({
                {!isAddingAddress && (
                  <button 
                   onClick={() => setIsAddingAddress(true)}
-                  className="w-8 h-8 bg-pink-500 text-white rounded-full flex items-center justify-center font-bold shadow-md hover:bg-pink-600 transition-colors"
+                  className="w-8 h-8 bg-pink-500 text-white rounded-full flex items-center justify-center font-bold shadow-md hover:bg-pink-600"
                   title="Add New Address"
                  >
                    +
@@ -227,7 +227,7 @@ const Profile: React.FC<ProfileProps> = ({
 
             {/* Add New Address Form */}
             {isAddingAddress && (
-              <div className="mb-6 p-4 bg-pink-50 rounded-2xl border-2 border-pink-200 space-y-3 animate-in slide-in-from-top-4 duration-300">
+              <div className="mb-6 p-4 bg-pink-50 rounded-2xl border-2 border-pink-200 space-y-3">
                 <h4 className="text-xs font-black text-pink-600 uppercase tracking-widest text-center">New Address 🍦</h4>
                 <input 
                   type="text" 
@@ -269,7 +269,7 @@ const Profile: React.FC<ProfileProps> = ({
                 {user.addresses.map(addr => (
                   <div key={addr.id} className="relative group">
                     {editingAddressId === addr.id && editAddressData ? (
-                      <div className="p-4 bg-yellow-50 rounded-2xl border-2 border-yellow-200 space-y-3 animate-in zoom-in-95 duration-200">
+                      <div className="p-4 bg-yellow-50 rounded-2xl border-2 border-yellow-200 space-y-3">
                         <input 
                           type="text" 
                           placeholder="Label (e.g. Home)"
@@ -304,10 +304,10 @@ const Profile: React.FC<ProfileProps> = ({
                         </div>
                       </div>
                     ) : (
-                      <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100 hover:border-pink-200 transition-colors">
+                      <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100 hover:border-pink-200">
                         <div className="flex justify-between items-start mb-1">
                           <p className="font-bold text-blue-700 text-sm">{addr.label}</p>
-                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex gap-1 opacity-0 group-hover:opacity-100">
                             <button 
                               onClick={() => handleStartEditAddress(addr)}
                               className="text-blue-400 hover:text-blue-600 p-1"
@@ -358,21 +358,21 @@ const Profile: React.FC<ProfileProps> = ({
                 {favoriteItems.map(flavor => (
                   <div 
                     key={flavor.id}
-                    className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 hover:bg-pink-50 group border border-transparent hover:border-pink-100 relative transition-all"
+                    className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 hover:bg-pink-50 group border border-transparent hover:border-pink-100 relative"
                   >
                     <button 
                       onClick={(e) => {
                         e.stopPropagation();
                         onToggleFavorite(flavor.id);
                       }}
-                      className="absolute top-2 right-2 p-1 text-pink-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-2 right-2 p-1 text-pink-500 opacity-0 group-hover:opacity-100"
                     >
                       ✕
                     </button>
                     <img 
                       src={flavor.image} 
                       onClick={() => onSelectProduct(flavor)}
-                      className="w-16 h-16 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform cursor-pointer" 
+                      className="w-16 h-16 rounded-xl object-cover shadow-sm cursor-pointer" 
                       alt={flavor.name} 
                     />
                     <div onClick={() => onSelectProduct(flavor)} className="cursor-pointer">

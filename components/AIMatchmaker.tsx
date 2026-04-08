@@ -7,9 +7,10 @@ import { IceCream } from '../types';
 interface AIMatchmakerProps {
   onBack: () => void;
   onAddToCart: (p: IceCream) => void;
+  products: IceCream[];
 }
 
-const AIMatchmaker: React.FC<AIMatchmakerProps> = ({ onBack, onAddToCart }) => {
+const AIMatchmaker: React.FC<AIMatchmakerProps> = ({ onBack, onAddToCart, products }) => {
   const [mood, setMood] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ flavorName: string; reason: string; vibe: string } | null>(null);
@@ -19,23 +20,23 @@ const AIMatchmaker: React.FC<AIMatchmakerProps> = ({ onBack, onAddToCart }) => {
     setLoading(true);
     
     // Extract names from our menu constants to send to AI
-    const availableFlavorNames = ICE_CREAMS.map(item => item.name);
+    const availableFlavorNames = products.map(item => item.name);
     
     const recommendation = await getIceCreamMatch(mood, availableFlavorNames);
     setResult(recommendation);
     setLoading(false);
   };
 
-  const matchedProduct = result ? ICE_CREAMS.find(p => 
+  const matchedProduct = result ? products.find(p => 
     p.name.toLowerCase().includes(result.flavorName.toLowerCase()) || 
     result.flavorName.toLowerCase().includes(p.name.toLowerCase())
-  ) || ICE_CREAMS[0] : null;
+  ) || products[0] : null;
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
       <button 
         onClick={onBack}
-        className="mb-8 flex items-center gap-2 text-gray-400 font-bold hover:text-blue-500 transition-colors"
+        className="mb-8 flex items-center gap-2 text-gray-400 font-bold hover:text-blue-500"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -49,7 +50,7 @@ const AIMatchmaker: React.FC<AIMatchmakerProps> = ({ onBack, onAddToCart }) => {
           <p className="text-xl text-blue-100 mb-10 max-w-lg">Tell us how you're feeling, and our smart cone will suggest the perfect scoop for your soul.</p>
 
           {!result ? (
-            <div className="space-y-6 animate-in fade-in duration-500">
+            <div className="space-y-6">
               <textarea 
                 value={mood}
                 onChange={(e) => setMood(e.target.value)}
@@ -59,18 +60,18 @@ const AIMatchmaker: React.FC<AIMatchmakerProps> = ({ onBack, onAddToCart }) => {
               <button 
                 onClick={handleMatch}
                 disabled={loading || !mood}
-                className="px-12 py-5 bg-white text-blue-600 text-xl font-black rounded-2xl hover:bg-blue-50 transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 flex items-center gap-3"
+                className="px-12 py-5 bg-white text-blue-600 text-xl font-black rounded-2xl hover:bg-blue-50 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
               >
                 {loading ? (
                   <>
-                    <div className="w-6 h-6 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                    <div className="w-6 h-6 border-4 border-blue-200 border-t-blue-600 rounded-full"></div>
                     Thinking...
                   </>
                 ) : 'Match Me! 🍦'}
               </button>
             </div>
           ) : (
-            <div className="bg-white rounded-3xl p-10 text-gray-800 animate-in zoom-in-95 duration-500">
+            <div className="bg-white rounded-3xl p-10 text-gray-800">
               <div className="flex flex-col md:flex-row gap-10 items-center">
                 {matchedProduct && (
                   <img 
@@ -86,13 +87,13 @@ const AIMatchmaker: React.FC<AIMatchmakerProps> = ({ onBack, onAddToCart }) => {
                   <div className="flex flex-wrap gap-4 pt-4">
                     <button 
                       onClick={() => matchedProduct && onAddToCart(matchedProduct)}
-                      className="px-8 py-3 bg-pink-600 text-white font-bold rounded-xl hover:bg-pink-700 transition-all shadow-lg active:scale-95"
+                      className="px-8 py-3 bg-pink-600 text-white font-bold rounded-xl hover:bg-pink-700 shadow-lg"
                     >
                       Add To Order
                     </button>
                     <button 
                       onClick={() => {setResult(null); setMood('');}}
-                      className="px-8 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-all"
+                      className="px-8 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200"
                     >
                       Try Another Mood
                     </button>

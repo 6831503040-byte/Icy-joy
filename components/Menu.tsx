@@ -16,9 +16,6 @@ const Menu: React.FC<MenuProps> = ({ onSelectProduct, onAddToCart, favorites, on
   const [filter, setFilter] = useState<'All' | 'Classic' | 'Special' | 'Fruity'>('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('default');
-  const [quickAddId, setQuickAddId] = useState<string | null>(null);
-  const [selectedFormat, setSelectedFormat] = useState<ServingFormat>('Scoop');
-  const [selectedSize, setSelectedSize] = useState<ServingSize>('S');
   
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -90,26 +87,6 @@ const Menu: React.FC<MenuProps> = ({ onSelectProduct, onAddToCart, favorites, on
       case 'L': return '16 oz.';
       default: return '';
     }
-  };
-
-  const handleQuickAddClick = (e: React.MouseEvent, item: IceCream) => {
-    e.stopPropagation();
-    if (quickAddId === item.id) {
-      const finalPrice = selectedFormat === 'Quart' 
-        ? item.price + getSizePriceModifier(selectedSize) 
-        : item.price;
-      onAddToCart(item, selectedFormat, selectedFormat === 'Quart' ? selectedSize : 'S', finalPrice);
-      setQuickAddId(null);
-    } else {
-      setQuickAddId(item.id);
-      setSelectedFormat('Scoop');
-      setSelectedSize('S');
-    }
-  };
-
-  const handleCancelQuickAdd = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setQuickAddId(null);
   };
 
   return (
@@ -185,10 +162,6 @@ const Menu: React.FC<MenuProps> = ({ onSelectProduct, onAddToCart, favorites, on
         {filteredAndSortedItems.length > 0 ? (
           filteredAndSortedItems.map((item) => {
           const isFav = favorites.includes(item.id);
-          const isQuickAdding = quickAddId === item.id;
-          const currentPrice = isQuickAdding && selectedFormat === 'Quart' 
-            ? item.price + getSizePriceModifier(selectedSize) 
-            : item.price;
 
           return (
             <div 
@@ -212,47 +185,9 @@ const Menu: React.FC<MenuProps> = ({ onSelectProduct, onAddToCart, favorites, on
                 <img 
                   src={item.image} 
                   alt={item.name} 
-                  className={`w-full h-full object-cover transition-transform duration-500 ${isQuickAdding ? 'scale-105 blur-[2px]' : 'group-hover:scale-110'}`}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 
-                {isQuickAdding && (
-                  <div className="absolute inset-0 bg-white/70 backdrop-blur-md z-10 flex flex-col justify-center p-4 space-y-3 animate-in fade-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
-                    <div>
-                      <p className="text-xs font-black text-pink-600 uppercase tracking-widest mb-2 text-center">Select Style</p>
-                      <div className="flex gap-2">
-                        {['Scoop', 'Quart'].map((f) => (
-                          <button
-                            key={f}
-                            onClick={() => setSelectedFormat(f as ServingFormat)}
-                            className={`flex-1 py-3 text-2xl font-black rounded-2xl transition-all border-2 ${selectedFormat === f ? 'bg-pink-600 border-pink-600 text-white shadow-lg' : 'bg-white border-white text-gray-400'}`}
-                          >
-                            {f === 'Scoop' ? '🍦' : '🍨'}
-                            <div className="text-[10px] uppercase tracking-tighter">{f}</div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {selectedFormat === 'Quart' && (
-                      <div className="animate-in slide-in-from-top-2 duration-200">
-                        <p className="text-xs font-black text-blue-600 uppercase tracking-widest mb-2 text-center">Quart Size</p>
-                        <div className="flex gap-2">
-                          {['S', 'M', 'L'].map((s) => (
-                            <button
-                              key={s}
-                              onClick={() => setSelectedSize(s as ServingSize)}
-                              className={`flex-1 py-2 text-xl font-black rounded-2xl transition-all border-2 flex flex-col items-center justify-center ${selectedSize === s ? 'bg-yellow-400 border-yellow-400 text-gray-900 shadow-lg' : 'bg-white border-white text-gray-400'}`}
-                            >
-                              <span>{s}</span>
-                              <span className={`text-[8px] font-bold ${selectedSize === s ? 'text-yellow-100' : 'text-gray-400'}`}>{getSizeVolume(s as ServingSize)}</span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-
                 <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full font-bold text-pink-600 shadow-sm z-20">
                   ★ {item.rating}
                 </div>
@@ -264,35 +199,21 @@ const Menu: React.FC<MenuProps> = ({ onSelectProduct, onAddToCart, favorites, on
                     <h3 className="text-2xl font-bold text-gray-800">{item.name}</h3>
                     <p className="text-gray-500 text-sm">{item.category}</p>
                   </div>
-                  <p className="text-2xl font-black text-blue-600">฿{currentPrice}</p>
+                  <p className="text-2xl font-black text-blue-600">฿{item.price}</p>
                 </div>
                 
                 <p className="text-gray-600 line-clamp-2">{item.description}</p>
                 
                 <div className="flex gap-3 pt-2">
-                  {isQuickAdding ? (
-                    <div className="flex w-full gap-2">
-                      <button 
-                        onClick={handleCancelQuickAdd}
-                        className="w-1/3 py-4 font-black text-lg rounded-2xl bg-white text-gray-400 border-2 border-gray-100 hover:bg-gray-50 hover:text-red-400 transition-all active:scale-95 flex items-center justify-center"
-                      >
-                        Cancel
-                      </button>
-                      <button 
-                        onClick={(e) => handleQuickAddClick(e, item)}
-                        className="flex-grow py-4 font-black text-lg rounded-2xl bg-blue-500 text-white border-2 border-blue-500 hover:bg-blue-600 shadow-blue-100 shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2"
-                      >
-                        Confirm
-                      </button>
-                    </div>
-                  ) : (
-                    <button 
-                      onClick={(e) => handleQuickAddClick(e, item)}
-                      className="w-full py-4 font-black text-lg rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2 border-2 bg-white text-pink-600 border-pink-200 hover:bg-pink-600 hover:text-white hover:border-pink-600 shadow-md"
-                    >
-                      Add to Cart
-                    </button>
-                  )}
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectProduct(item);
+                    }}
+                    className="w-full py-4 font-black text-lg rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2 border-2 bg-white text-pink-600 border-pink-200 hover:bg-pink-600 hover:text-white hover:border-pink-600 shadow-md"
+                  >
+                    Add to Cart
+                  </button>
                 </div>
               </div>
             </div>

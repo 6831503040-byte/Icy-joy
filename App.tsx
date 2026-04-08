@@ -12,6 +12,8 @@ import AIMatchmaker from './components/AIMatchmaker';
 import Profile from './components/Profile';
 import Payment from './components/Payment';
 import OrderStatus from './components/OrderStatus';
+import { HelpCircle, X, MessageCircle, Truck, CreditCard, ShieldCheck } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('home');
@@ -21,6 +23,7 @@ const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [activeOrder, setActiveOrder] = useState<Order | null>(null);
   const [showGlobalArrivalNotify, setShowGlobalArrivalNotify] = useState(false);
+  const [showFAQ, setShowFAQ] = useState(false);
   
   // State for persistent data across sessions - Added password field
   const [userRegistry, setUserRegistry] = useState<Record<string, { favorites: string[], orders: Order[], profile: User, password?: string }>>({});
@@ -440,6 +443,51 @@ const App: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* FAQ FAB */}
+      <div className="fixed bottom-6 right-6 z-[110]">
+        <AnimatePresence>
+          {showFAQ && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 20 }}
+              className="absolute bottom-20 right-0 w-80 bg-white rounded-[2rem] shadow-2xl border-4 border-pink-100 overflow-hidden"
+            >
+              <div className="bg-pink-600 p-4 text-white flex justify-between items-center">
+                <h3 className="font-black flex items-center gap-2"><MessageCircle size={20} /> Icy Help</h3>
+                <button onClick={() => setShowFAQ(false)} className="hover:bg-pink-500 p-1 rounded-full transition-colors"><X size={20} /></button>
+              </div>
+              <div className="p-4 space-y-4 max-h-[400px] overflow-y-auto">
+                <div className="space-y-2">
+                  <h4 className="font-bold text-pink-600 text-sm flex items-center gap-2"><Truck size={16} /> Delivery</h4>
+                  <p className="text-xs text-gray-600">We deliver within 30-45 minutes in the city area. Free delivery for orders over ฿300!</p>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-bold text-pink-600 text-sm flex items-center gap-2"><CreditCard size={16} /> Payment</h4>
+                  <p className="text-xs text-gray-600">We accept Credit Cards, PromptPay, and Cash on Delivery.</p>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-bold text-pink-600 text-sm flex items-center gap-2"><ShieldCheck size={16} /> Quality</h4>
+                  <p className="text-xs text-gray-600">Our ice cream is made with 100% organic milk and fresh local fruits.</p>
+                </div>
+                <div className="pt-2 border-t border-gray-100">
+                  <button className="w-full py-2 bg-gray-50 text-pink-600 font-bold text-xs rounded-xl hover:bg-pink-50 transition-colors">
+                    Chat with a Human 🍦
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        <button 
+          onClick={() => setShowFAQ(!showFAQ)}
+          className={`w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all active:scale-90 ${showFAQ ? 'bg-gray-800 text-white' : 'bg-pink-600 text-white hover:bg-pink-700'}`}
+        >
+          {showFAQ ? <X size={32} /> : <HelpCircle size={32} />}
+        </button>
+      </div>
 
       <main className="flex-grow pt-20">
         {renderView()}

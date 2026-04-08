@@ -9,6 +9,7 @@ export const ICE_CREAMS: IceCream[] = [
     image: 'https://images.unsplash.com/photo-1570197788417-0e82375c9371?q=80&w=600&h=600&auto=format&fit=crop',
     category: 'Classic',
     rating: 4.8,
+    reviewCount: 124,
     color: 'bg-yellow-50'
   },
   {
@@ -19,6 +20,7 @@ export const ICE_CREAMS: IceCream[] = [
     image: 'https://images.pexels.com/photos/8713077/pexels-photo-8713077.jpeg',
     category: 'Fruity',
     rating: 4.9,
+    reviewCount: 89,
     color: 'bg-pink-50'
   },
   {
@@ -29,6 +31,7 @@ export const ICE_CREAMS: IceCream[] = [
     image: 'https://images.pexels.com/photos/8713080/pexels-photo-8713080.jpeg',
     category: 'Special',
     rating: 4.8,
+    reviewCount: 56,
     color: 'bg-green-50'
   },
   {
@@ -39,6 +42,7 @@ export const ICE_CREAMS: IceCream[] = [
     image: 'https://images.pexels.com/photos/5061032/pexels-photo-5061032.jpeg',
     category: 'Classic',
     rating: 5.0,
+    reviewCount: 210,
     color: 'bg-amber-100'
   },
   {
@@ -49,6 +53,7 @@ export const ICE_CREAMS: IceCream[] = [
     image: 'https://images.pexels.com/photos/5061193/pexels-photo-5061193.jpeg',
     category: 'Fruity',
     rating: 5.0,
+    reviewCount: 145,
     color: 'bg-amber-50'
   },
   {
@@ -59,6 +64,7 @@ export const ICE_CREAMS: IceCream[] = [
     image: 'https://images.pexels.com/photos/5060889/pexels-photo-5060889.jpeg',
     category: 'Special',
     rating: 4.9,
+    reviewCount: 78,
     color: 'bg-emerald-50'
   },
   {
@@ -69,6 +75,7 @@ export const ICE_CREAMS: IceCream[] = [
     image: 'https://images.pexels.com/photos/12551947/pexels-photo-12551947.jpeg',
     category: 'Fruity',
     rating: 4.7,
+    reviewCount: 62,
     color: 'bg-indigo-50'
   },
   {
@@ -79,6 +86,7 @@ export const ICE_CREAMS: IceCream[] = [
     image: 'https://images.pexels.com/photos/11521706/pexels-photo-11521706.jpeg',
     category: 'Classic',
     rating: 4.8,
+    reviewCount: 94,
     color: 'bg-stone-100'
   }
 ];

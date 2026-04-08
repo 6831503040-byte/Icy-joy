@@ -38,7 +38,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
     setResetSuccess(false);
   }, [isSignUp, isForgotPassword, email, password, newPassword]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (isForgotPassword) {
@@ -46,7 +46,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
         setLoginError("Passwords do not match. 🍦");
         return;
       }
-      const result = onResetPassword(email, newPassword);
+      const result = await onResetPassword(email, newPassword);
       if (result.success) {
         setResetSuccess(true);
         setIsForgotPassword(false);
@@ -58,7 +58,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
       return;
     }
 
-    const result = onLogin(email, password, isSignUp, isSignUp ? name : undefined);
+    const result = await onLogin(email, password, isSignUp, isSignUp ? name : undefined);
     
     if (!result.success) {
       if (result.error === 'USER_NOT_FOUND') {
@@ -66,7 +66,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
       } else if (result.error === 'WRONG_PASSWORD') {
         setLoginError("Incorrect password. Please check again.🍭");
       } else {
-        setLoginError("Something went wrong. Please try again.");
+        setLoginError(result.error || "Something went wrong. Please try again.");
       }
     }
   };
@@ -76,7 +76,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
       {/* CLEAR BACK BUTTON */}
       <button 
         onClick={onBack}
-        className="self-start mb-8 flex items-center gap-2 text-gray-400 font-bold hover:text-pink-600 transition-colors"
+        className="self-start mb-8 flex items-center gap-2 text-gray-400 font-bold hover:text-pink-600"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -84,12 +84,12 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
         Go Back
       </button>
 
-      <div className="w-full bg-white p-10 rounded-[2.5rem] shadow-2xl border-4 border-yellow-100 animate-in zoom-in-95 duration-500 relative overflow-hidden">
+      <div className="w-full bg-white p-10 rounded-[2.5rem] shadow-2xl border-4 border-yellow-100 relative overflow-hidden">
         {/* Decorative corner accent */}
-        <div className={`absolute top-0 right-0 w-24 h-24 ${isSignUp ? 'bg-pink-100' : 'bg-yellow-100'} -mr-12 -mt-12 rounded-full transition-colors duration-500`}></div>
+        <div className={`absolute top-0 right-0 w-24 h-24 ${isSignUp ? 'bg-pink-100' : 'bg-yellow-100'} -mr-12 -mt-12 rounded-full`}></div>
         
         <div className="text-center mb-10 relative z-10">
-          <div className="text-6xl mb-4 transition-transform duration-500 hover:scale-110">
+          <div className="text-6xl mb-4">
             {isForgotPassword ? '🔑' : (isSignUp ? '🍦' : '👋')}
           </div>
           <h2 className="text-3xl font-black text-gray-800">
@@ -101,7 +101,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
         </div>
 
         {loginError && (
-          <div className="mb-6 p-4 bg-red-50 border-2 border-red-100 text-red-500 rounded-2xl text-sm font-bold animate-shake flex flex-col gap-1">
+          <div className="mb-6 p-4 bg-red-50 border-2 border-red-100 text-red-500 rounded-2xl text-sm font-bold flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <span>⚠️</span> {loginError}
             </div>
@@ -118,14 +118,14 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
         )}
 
         {resetSuccess && (
-          <div className="mb-6 p-4 bg-green-50 border-2 border-green-100 text-green-600 rounded-2xl text-sm font-bold animate-in fade-in flex items-center gap-2">
+          <div className="mb-6 p-4 bg-green-50 border-2 border-green-100 text-green-600 rounded-2xl text-sm font-bold flex items-center gap-2">
             <span>✅</span> Password reset successfully! You can now sign in.
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
           {isSignUp && (
-            <div className="space-y-2 animate-in slide-in-from-top-4 duration-300">
+            <div className="space-y-2">
               <label className="block font-bold text-gray-700 ml-2 text-sm uppercase tracking-wide">Full Name</label>
               <input 
                 type="text" 
@@ -133,7 +133,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Scoop Master"
-                className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:outline-none focus:border-blue-300 transition-all text-gray-600 font-medium"
+                className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:outline-none focus:border-blue-300 text-gray-600 font-medium"
               />
             </div>
           )}
@@ -142,7 +142,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
             <div className="flex justify-between items-center">
               <label className="block font-bold text-gray-700 ml-2 text-sm uppercase tracking-wide">Email Address</label>
               {isEmailTaken && !isSignUp && !isForgotPassword && (
-                <span className="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-bold animate-in fade-in">ACCOUNT FOUND!</span>
+                <span className="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-bold">ACCOUNT FOUND!</span>
               )}
             </div>
             <input 
@@ -154,10 +154,10 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
                 setEmail(e.target.value);
               }}
               placeholder="hello@example.com"
-              className={`w-full px-6 py-4 bg-gray-50 border-2 rounded-2xl focus:outline-none transition-all text-gray-600 font-medium ${isForgotPassword ? 'opacity-70 cursor-not-allowed' : ''} ${showUserNotFoundWarning ? 'border-yellow-400 bg-yellow-50' : 'border-gray-100 focus:border-yellow-400'}`}
+              className={`w-full px-6 py-4 bg-gray-50 border-2 rounded-2xl focus:outline-none text-gray-600 font-medium ${isForgotPassword ? 'opacity-70 cursor-not-allowed' : ''} ${showUserNotFoundWarning ? 'border-yellow-400 bg-yellow-50' : 'border-gray-100 focus:border-yellow-400'}`}
             />
             {showUserNotFoundWarning && (
-              <p className="text-[11px] text-yellow-600 font-bold ml-2 animate-in slide-in-from-top-1 duration-200">
+              <p className="text-[11px] text-yellow-600 font-bold ml-2">
                 ✨ This account does not exist in the system. Please switch and click to create a new account. <span className="underline cursor-pointer" onClick={() => setIsSignUp(true)}>Create One</span>
               </p>
             )}
@@ -184,12 +184,12 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className={`w-full px-6 py-4 bg-gray-50 border-2 rounded-2xl focus:outline-none transition-all text-gray-600 font-medium pr-14 ${loginError && loginError.includes('Incorrect password') ? 'border-red-300' : 'border-gray-100 focus:border-pink-300'}`}
+                  className={`w-full px-6 py-4 bg-gray-50 border-2 rounded-2xl focus:outline-none text-gray-600 font-medium pr-14 ${loginError && loginError.includes('Incorrect password') ? 'border-red-300' : 'border-gray-100 focus:border-pink-300'}`}
                 />
                 <button 
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-pink-500 transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-pink-500"
                 >
                   {showPassword ? (
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -205,7 +205,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
               </div>
             </div>
           ) : (
-            <div className="space-y-4 animate-in slide-in-from-top-4 duration-300">
+            <div className="space-y-4">
               <div className="space-y-2">
                 <label className="block font-bold text-gray-700 ml-2 text-sm uppercase tracking-wide">New Password</label>
                 <input 
@@ -214,7 +214,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:outline-none focus:border-pink-300 transition-all text-gray-600 font-medium"
+                  className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:outline-none focus:border-pink-300 text-gray-600 font-medium"
                 />
               </div>
               <div className="space-y-2">
@@ -225,7 +225,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:outline-none focus:border-pink-300 transition-all text-gray-600 font-medium"
+                  className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:outline-none focus:border-pink-300 text-gray-600 font-medium"
                 />
               </div>
             </div>
@@ -237,7 +237,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
               isForgotPassword || isSignUp 
                 ? 'bg-pink-600 hover:bg-pink-700 shadow-pink-100 text-white' 
                 : 'bg-yellow-400 hover:bg-yellow-500 shadow-yellow-100 text-gray-900'
-            } text-xl font-black rounded-2xl transition-all shadow-lg active:scale-95`}
+            } text-xl font-black rounded-2xl shadow-lg`}
           >
             {isForgotPassword ? 'Reset Password ✨' : (isSignUp ? 'Create Account' : 'Sign In 🍦')}
           </button>
@@ -246,7 +246,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
             <button 
               type="button"
               onClick={() => setIsForgotPassword(false)}
-              className="w-full text-center text-gray-400 font-bold text-sm hover:text-gray-600 transition-colors"
+              className="w-full text-center text-gray-400 font-bold text-sm hover:text-gray-600"
             >
               Cancel
             </button>
@@ -264,22 +264,11 @@ const Login: React.FC<LoginProps> = ({ onLogin, onResetPassword, onBack, initial
         )}
       </div>
       
-      <div className="mt-12 flex gap-4 animate-in fade-in slide-in-from-bottom-2 duration-700 delay-200">
-        <div className="w-12 h-12 bg-white rounded-2xl shadow-md flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors font-bold text-gray-400">G</div>
-        <div className="w-12 h-12 bg-white rounded-2xl shadow-md flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors font-bold text-gray-400">f</div>
-        <div className="w-12 h-12 bg-white rounded-2xl shadow-md flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors font-bold text-gray-400"></div>
+      <div className="mt-12 flex gap-4">
+        <div className="w-12 h-12 bg-white rounded-2xl shadow-md flex items-center justify-center cursor-pointer hover:bg-gray-50 font-bold text-gray-400">G</div>
+        <div className="w-12 h-12 bg-white rounded-2xl shadow-md flex items-center justify-center cursor-pointer hover:bg-gray-50 font-bold text-gray-400">f</div>
+        <div className="w-12 h-12 bg-white rounded-2xl shadow-md flex items-center justify-center cursor-pointer hover:bg-gray-50 font-bold text-gray-400"></div>
       </div>
-
-      <style>{`
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-5px); }
-          75% { transform: translateX(5px); }
-        }
-        .animate-shake {
-          animation: shake 0.2s ease-in-out 0s 2;
-        }
-      `}</style>
     </div>
   );
 };

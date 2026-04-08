@@ -23,10 +23,10 @@ const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onUpdateSize, onBa
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-12 animate-in fade-in slide-in-from-right-4 duration-500">
+    <div className="max-w-5xl mx-auto px-6 py-12">
        <button 
         onClick={onBack}
-        className="mb-8 flex items-center gap-2 text-gray-400 font-bold hover:text-pink-600 transition-colors"
+        className="mb-8 flex items-center gap-2 text-gray-400 font-bold hover:text-pink-600"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -44,7 +44,7 @@ const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onUpdateSize, onBa
           <h3 className="text-2xl font-bold text-gray-400">Your cart is empty and sad...</h3>
           <button 
             onClick={onBack}
-            className="mt-8 px-10 py-4 bg-pink-600 text-white font-bold rounded-2xl hover:bg-pink-700 transition-all shadow-lg"
+            className="mt-8 px-10 py-4 bg-pink-600 text-white font-bold rounded-2xl hover:bg-pink-700 shadow-lg"
           >
             Let's go find some scoops!
           </button>
@@ -53,7 +53,7 @@ const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onUpdateSize, onBa
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2 space-y-4">
             {items.map((item, idx) => (
-              <div key={`${item.iceCream.id}-${item.format}-${item.size}`} className="bg-white p-6 rounded-3xl shadow-md flex flex-col md:flex-row items-center gap-6 border border-gray-50 hover:border-pink-100 transition-colors">
+              <div key={`${item.iceCream.id}-${item.format}-${item.size}`} className="bg-white p-6 rounded-3xl shadow-md flex flex-col md:flex-row items-center gap-6 border border-gray-50 hover:border-pink-100">
                 <img src={item.iceCream.image} alt={item.iceCream.name} className="w-24 h-24 rounded-2xl object-cover shadow-sm flex-shrink-0" />
                 <div className="flex-grow text-center md:text-left">
                   <h4 className="text-lg md:text-xl font-bold text-gray-800">{item.iceCream.name}</h4>
@@ -69,7 +69,7 @@ const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onUpdateSize, onBa
                           <button
                             key={s}
                             onClick={() => onUpdateSize(item.iceCream.id, item.format, item.size, s)}
-                            className={`px-3 py-1 rounded-lg text-xs font-bold border-2 transition-all ${
+                            className={`px-3 py-1 rounded-lg text-xs font-bold border-2 ${
                               item.size === s 
                                 ? 'bg-yellow-400 border-yellow-400 text-gray-900 shadow-sm' 
                                 : 'bg-white border-gray-100 text-gray-400 hover:border-yellow-200'
@@ -87,9 +87,9 @@ const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onUpdateSize, onBa
 
                 <div className="flex flex-col items-center md:items-end gap-2 flex-shrink-0">
                   <div className="flex items-center bg-gray-50 rounded-2xl p-2 gap-4 border border-gray-100">
-                    <button onClick={() => onUpdateQuantity(item.iceCream.id, item.format, item.size, -1)} className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center font-bold text-gray-600 hover:text-pink-600 transition-colors">-</button>
+                    <button onClick={() => onUpdateQuantity(item.iceCream.id, item.format, item.size, -1)} className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center font-bold text-gray-600 hover:text-pink-600">-</button>
                     <span className="font-bold w-4 text-center text-blue-600">{item.quantity}</span>
-                    <button onClick={() => onUpdateQuantity(item.iceCream.id, item.format, item.size, 1)} className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center font-bold text-gray-600 hover:text-pink-600 transition-colors">+</button>
+                    <button onClick={() => onUpdateQuantity(item.iceCream.id, item.format, item.size, 1)} className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center font-bold text-gray-600 hover:text-pink-600">+</button>
                   </div>
                   <p className="font-black text-gray-800">฿{item.finalPrice * item.quantity}</p>
                 </div>
@@ -115,7 +115,7 @@ const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onUpdateSize, onBa
             </div>
             <button 
               onClick={onCheckout}
-              className="w-full py-5 bg-blue-500 text-white text-xl font-bold rounded-2xl hover:bg-blue-600 transition-all shadow-xl active:scale-95"
+              className="w-full py-5 bg-blue-500 text-white text-xl font-bold rounded-2xl hover:bg-blue-600 shadow-xl"
             >
               Checkout Now
             </button>
